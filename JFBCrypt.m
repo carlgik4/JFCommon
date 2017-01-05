@@ -875,4 +875,31 @@ signed char index_64[] = {
 	return salt;
 }
 
+/*
+ * Check hash is valid or not
+ *
+ * Params
+ *		password		origin password
+ *		hash			a hashed result
+ *
+ * Returns
+ *		Valid or not
+ */
++ (BOOL) checkPassword: (NSString *) password withHash: (NSString *) hash {
+    NSString *try_pw = [self hashPassword:password withSalt:hash];
+    
+    if (hash.length != try_pw.length) {
+        return NO;
+    }
+    
+    Byte ret = 0;
+    
+    const char *hashed_bytes = [hash UTF8String];
+    const char *try_bytes = [try_pw UTF8String];
+    
+    for (int i = 0; i < try_pw.length; i++)
+        ret |= hashed_bytes[i] ^ try_bytes[i];
+    return ret == 0;
+}
+
 @end
